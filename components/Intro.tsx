@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export default function DemoPage() {
+export default function IntroPage() {
   return (
     <div className="relative h-full w-full flex items-center justify-center">
       {/* Blurred Background Image */}

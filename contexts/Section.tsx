@@ -10,8 +10,8 @@ import {
 } from "react";
 
 import HomePage from "@/components/Home";
-import DemoPage from "@/components/Demo";
-import NewsPage from "@/components/News";
+import IntroPage from "@/components/Intro";
+import ConceptPage from "@/components/Concept";
 import AboutPage from "@/components/About";
 
 type SectionContextType = {
@@ -27,7 +27,7 @@ export function SectionProvider({ children }: { children: ReactNode }) {
   const navItems = ["Trang chủ", "Giới thiệu", "Concept", "About"];
 
   // The components match the exact order of navItems
-  const pages = [HomePage, DemoPage, NewsPage, AboutPage];
+  const pages = [HomePage, IntroPage, ConceptPage, AboutPage];
 
   const [section, setSection] = useState(0);
 

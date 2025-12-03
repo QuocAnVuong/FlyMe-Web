@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useSection } from "@/contexts/Section";
 
 export default function Home() {
-  const [boxColor, setBoxColor] = useState("#ffffff");
   const { section, navItems, setSection, pages } = useSection();
 
   useEffect(() => {
@@ -15,11 +14,6 @@ export default function Home() {
 
       isScrolling = true;
       setTimeout(() => (isScrolling = false), 700);
-
-      const randomColor = `#${Math.floor(Math.random() * 16777215).toString(
-        16
-      )}`;
-      setBoxColor(randomColor);
 
       if (e.deltaY > 0) {
         setSection((prev) => Math.min(prev + 1, navItems.length - 1));
