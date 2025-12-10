@@ -1,29 +1,38 @@
-// pages/api/admin-message.ts
 import type { NextApiRequest, NextApiResponse } from "next";
 
-type Body = {
-  text?: string;
-  targetUserId?: string; // optional: the userId room to send to
-};
-
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST")
-    return res.status(405).json({ error: "Only POST" });
+  // Ensure socket exists
+  const serverSocket = res.socket?.server;
 
-  const io = (res.socket.server as any)?.io;
-  if (!io)
+  if (!serverSocket) {
+    return res.status(500).json({ error: "Socket server not available" });
+  }
+
+  // Ensure IO exists
+  const io = (serverSocket as any).io;
+
+  if (!io) {
     return res.status(500).json({ error: "Socket.IO server not initialized" });
+  }
 
-  const body = req.body as Body;
-  const { text, targetUserId } = body;
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Only POST allowed" });
+  }
 
-  if (!text) return res.status(400).json({ error: "Missing text" });
+  const { text, targetUserId } = req.body;
 
+  if (!text || typeof text !== "string") {
+    return res.status(400).json({ error: "Missing or invalid 'text'" });
+  }
+
+  // Send to a specific user
   if (targetUserId) {
     io.to(targetUserId).emit("receive_message", { from: "admin", text });
-    return res.status(200).json({ success: true, sentTo: targetUserId, text });
-  } else {
-    io.emit("receive_message", { from: "admin", text });
-    return res.status(200).json({ success: true, broadcast: true, text });
+    return res.status(200).json({ success: true, sentTo: targetUserId });
   }
+
+  // Broadcast to all if no targetUserId
+  io.emit("receive_message", { from: "admin", text });
+
+  return res.status(200).json({ success: true, broadcast: true });
 }

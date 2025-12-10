@@ -5,6 +5,7 @@ import Navbar from "@/components/NavBar";
 import { SectionProvider } from "@/contexts/Section";
 import { ChatProvider } from "@/contexts/ChatContext";
 import ChatModal from "@/components/ChatModal";
+import ChatButton from "@/components/ChatButton";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,6 +36,7 @@ export default function RootLayout({
           <ChatProvider>
             <Navbar />
             <ChatModal />
+            <ChatButton />
             {children}
           </ChatProvider>
         </SectionProvider>

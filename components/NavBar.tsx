@@ -38,12 +38,12 @@ export default function Navbar() {
           </span>
         ))}
       </div>
-      <button
+      {/* <button
         onClick={openChat}
         className="px-4 py-2 rounded-md bg-white text-blue-600 shadow hover:bg-blue-100 transition mr-10"
       >
         Chat
-      </button>
+      </button> */}
     </nav>
   );
 }

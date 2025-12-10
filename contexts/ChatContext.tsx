@@ -7,6 +7,7 @@ type ChatContextType = {
   isOpen: boolean;
   openChat: () => void;
   closeChat: () => void;
+  switchChat: () => void;
   socket: Socket | null;
   userId: string | null;
 };
@@ -58,6 +59,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         isOpen,
         openChat: () => setIsOpen(true),
         closeChat: () => setIsOpen(false),
+        switchChat: () => setIsOpen((prev) => !prev),
         socket,
         userId,
       }}
