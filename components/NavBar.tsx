@@ -1,9 +1,12 @@
 "use client";
 import { useSection } from "@/contexts/Section";
+import { useChat } from "@/contexts/ChatContext";
 import Image from "next/image";
 
 export default function Navbar() {
   const { section, navItems, setSection } = useSection();
+  const { openChat } = useChat();
+
   return (
     // <nav className="h-[10vh] w-full flex items-center justify-center gap-12 text-2xl fixed top-0 z-50">
     <nav className="h-[10vh] w-full flex items-center gap-10 text-l z-50 bg-blue-300">
@@ -35,6 +38,12 @@ export default function Navbar() {
           </span>
         ))}
       </div>
+      <button
+        onClick={openChat}
+        className="px-4 py-2 rounded-md bg-white text-blue-600 shadow hover:bg-blue-100 transition mr-10"
+      >
+        Chat
+      </button>
     </nav>
   );
 }
