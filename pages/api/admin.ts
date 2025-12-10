@@ -1,37 +1,56 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import type { Server as NetServer } from "http";
+import type { Socket as NetSocket } from "net";
+import type { Server as IOServer } from "socket.io";
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Ensure socket exists
-  const serverSocket = res.socket?.server;
+//
+// Extend Next.js res.socket.server to include `.io`
+//
+interface SocketServer extends NetServer {
+  io?: IOServer;
+}
 
-  if (!serverSocket) {
+interface SocketWithServer extends NetSocket {
+  server: SocketServer;
+}
+
+interface NextApiResponseWithSocket extends NextApiResponse {
+  socket: SocketWithServer;
+}
+
+export default function handler(
+  req: NextApiRequest,
+  res: NextApiResponseWithSocket
+) {
+  const httpServer = res.socket?.server;
+
+  if (!httpServer) {
     return res.status(500).json({ error: "Socket server not available" });
   }
 
-  // Ensure IO exists
-  const io = (serverSocket as any).io;
+  const io = httpServer.io;
 
   if (!io) {
-    return res.status(500).json({ error: "Socket.IO server not initialized" });
+    return res
+      .status(500)
+      .json({ error: "Socket.IO server is not initialized yet" });
   }
 
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Only POST allowed" });
+    return res.status(405).json({ error: "Only POST method allowed" });
   }
 
   const { text, targetUserId } = req.body;
 
   if (!text || typeof text !== "string") {
-    return res.status(400).json({ error: "Missing or invalid 'text'" });
+    return res.status(400).json({ error: "Invalid 'text' field" });
   }
 
-  // Send to a specific user
   if (targetUserId) {
     io.to(targetUserId).emit("receive_message", { from: "admin", text });
     return res.status(200).json({ success: true, sentTo: targetUserId });
   }
 
-  // Broadcast to all if no targetUserId
   io.emit("receive_message", { from: "admin", text });
 
   return res.status(200).json({ success: true, broadcast: true });
